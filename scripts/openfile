@@ -1,0 +1,11 @@
+#!/bin/bash
+
+FILE=$(du -a /home/$USER/{books,videos,pictures,Downloads} | cut -f2 | dmenu -i -l 30)
+
+if [[ $FILE == *.pdf || $FILE == *.epub ]]; then
+	echo $FILE | xargs -I s zathura s
+elif [[ $FILE == *.mp4 || $FILE == *.mkv ]]; then
+	echo $FILE | xargs -I s mpv s
+elif [[ $FILE == *.png || $FILE == *.jpg || $FILE == *.jpeg ]]; then
+	echo $FILE | xargs -I s feh s
+fi

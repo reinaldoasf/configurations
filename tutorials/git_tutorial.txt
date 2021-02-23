@@ -1,0 +1,35 @@
+###################
+### credentials ###
+###################
+
+git config --global user.name <yourlogin>
+git config --global user.email <youremail>
+
+################
+### branches ###
+################
+
+# create new branch
+git checkout -b <new_branch_name>
+
+# change branch
+git checkout <branch_name>
+
+# remove branch
+git branch -d <branch_name>
+
+# add push URLs
+git remote set-url --add --push origin <URL>
+
+# diff between branches
+git diff <branch1> <branch2>
+
+# merge branch
+git merge <branch>
+
+#################################
+### reset local modifications ###
+#################################
+
+git fetch origin
+git reset --hard origin/<branch>

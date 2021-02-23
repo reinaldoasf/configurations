@@ -1,0 +1,37 @@
+************
+* packages *
+************
+
+android-tools
+
+****************
+* install twrp *
+****************
+
+adb devices (see connected devices)
+adb reboot bootloader
+fastboot flash recovery TWRP.img
+fastboot boot TWRP.img
+
+*************************
+* total clean cellphone *
+*************************
+
+fastboot erase system
+fastboot erase boot
+fastboot erase cache
+fastboot erase userdata
+fastboot erase recovery
+
+****************************
+* push custom rom to phone *
+****************************
+
+adb push CUSTOM-ROM.zip /sdcard
+
+****************
+* troubleshoot *
+****************
+
+adb kill-server
+adb start-server

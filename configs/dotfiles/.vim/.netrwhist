@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/home/ota/suckless/st'
+let g:netrw_dirhist_2='/home/ota/suckless/dwm'
+let g:netrw_dirhist_3='/home/ota/.snes9x/savestate'
+let g:netrw_dirhist_4='/home/ota/.config'
+let g:netrw_dirhist_5='/home/ota/configurations/tutorials'
+let g:netrw_dirhist_6='/home/ota/musics'

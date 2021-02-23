@@ -1,0 +1,48 @@
+###############
+# BASIC REGEX #
+###############
+
+### ... - <description>
+
+.  - Any one character
+$  - End of the line
+^  - Beginning of the line
+*  - Match any number of previous (including 0)
+\+ - Match any number of previous
+\S - Any non-whitespace character
+\s - Any whitespace character
+\? - Optional
+
+########
+# SETS #
+########
+
+[...]  - Matches any character present in the brackets
+[^...] - Negated set, matches any character that is not present in the brackets
+
+##########
+# RANGES #
+##########
+
+[<beginning>-<end>] - Matches any character included in the range
+
+### Examples:
+
+[a-z] - Any lowercase character
+[A-Z] - Any uppercase character
+[0-9] - Any number
+[A-Za-z] - Any letter
+
+##########
+# REPEAT #
+##########
+
+<c>\{X\}   - Any character repeated exactly X times
+<c>\{X,\}  - Any character repeated at least X times
+<c>\{X,Y\} - Any character repeated at least X times, but not more than Y times
+
+### Examples:
+
+e\{2\}   - The character "e" repeated 2 times
+a\{3,\}  - The character "a" repeated at least 3 times
+x\{2,3\} - Character "x" repeated at least 2 times, but not more than 3 times

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+while true; do
+	state=$(sed "s/^s.*\s//g" /proc/acpi/button/lid/LID0/state)
+	if [ $state = "closed" ]; then
+		echo mem > /sys/power/state
+	fi
+	sleep 1
+done &

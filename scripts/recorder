@@ -1,0 +1,12 @@
+#!/usr/bin/env sh
+
+DIR=~/videos
+
+if [ ! -d $DIR ]; then
+	mkdir $DIR
+fi
+
+#ffmpeg -y -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 -f alsa -i hw:0 $DIR/output.mp4
+ffmpeg -y -video_size 1920x1080 -framerate 30 -f x11grab -i :0.0 $DIR/output.mp4
+ffmpeg -y -i $DIR/output.mp4 -c:v libx264 -profile:v high -level 3.0 -pix_fmt yuv420p -brand mp42 $DIR/$(date +%Y-%m-%d_%H:%M:%S).mp4
+rm $DIR/output.mp4

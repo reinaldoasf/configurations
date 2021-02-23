@@ -1,0 +1,206 @@
+#!/usr/bin/env bash
+
+# small separator
+s()
+{
+	echo " ^c#FF0000^^r0,0,1,19^^f1^^d^"
+}
+
+# big separator
+S()
+{
+	echo " ^c#FFFF00^^r0,0,2,19^^f2^^d^"
+}
+
+recorder()
+{
+	rec=$(ps au | grep "ffmpeg.*output.mp4$")
+	if [[ $rec == *output.mp4* ]]; then
+		echo "^c#FF0000^ $(S)"
+	fi
+}
+
+# number of running virtual machines
+running()
+{
+	VMS=$(vboxmanage list runningvms | wc -l)
+	if [ $VMS -gt 0 ]; then
+		echo "^c#00FFFF^ $VMS $(S)"
+	fi
+}
+
+# CPU indicator and temperature
+cpu()
+{
+	CPU_US=$(top -bn1 | awk 'NR==3{print $2}')
+	CPU_SY=$(top -bn1 | awk 'NR==3{print $4}')
+	CPU_USAGE=$(echo $CPU_US + $CPU_SY | bc | xargs printf "%.*f" 0)
+	if [ $CPU_USAGE -le 1 ]; then
+		CPU_USAGE="^c#226622^CPU: ^r0,0,7,19^^f7^"
+	elif [ $CPU_USAGE -le 10 -a $CPU_USAGE -gt 1 ]; then
+		CPU_USAGE="^c#04FF00^CPU: ^c#226622^^r0,0,7,19^^f7^^c#04FF00^^r-7,17,7,2^"
+	elif [ $CPU_USAGE -le 20 -a $CPU_USAGE -gt 10 ]; then
+		CPU_USAGE="^c#0BFF00^CPU: ^c#226622^^r0,0,7,19^^f7^^c#0BFF00^^r-7,15,7,4^"
+	elif [ $CPU_USAGE -le 30 -a $CPU_USAGE -gt 20 ]; then
+		CPU_USAGE="^c#BBBB00^CPU: ^c#666622^^r0,0,7,19^^f7^^c#BBBB00^^r-7,13,7,6^"
+	elif [ $CPU_USAGE -le 40 -a $CPU_USAGE -gt 30 ]; then
+		CPU_USAGE="^c#BBBB00^CPU: ^c#666622^^r0,0,7,19^^f7^^c#BBBB00^^r-7,11,7,8^"
+	elif [ $CPU_USAGE -le 50 -a $CPU_USAGE -gt 40 ]; then
+		CPU_USAGE="^c#FFFF00^CPU: ^c#886622^^r0,0,7,19^^f7^^c#FFFF00^^r-7,9,7,10^"
+	elif [ $CPU_USAGE -le 60 -a $CPU_USAGE -gt 50 ]; then
+		CPU_USAGE="^c#FFFF00^CPU: ^c#886622^^r0,0,7,19^^f7^^c#FFFF00^^r-7,7,7,12^"
+	elif [ $CPU_USAGE -le 70 -a $CPU_USAGE -gt 60 ]; then
+		CPU_USAGE="^c#FFBB00^CPU: ^c#AA6622^^r0,0,7,19^^f7^^c#FFBB00^^r-7,5,7,14^"
+	elif [ $CPU_USAGE -le 80 -a $CPU_USAGE -gt 70 ]; then
+		CPU_USAGE="^c#FFBB00^CPU: ^c#AA2222^^r0,0,7,19^^f7^^c#FFBB00^^r-7,3,7,16^"
+	elif [ $CPU_USAGE -le 90 -a $CPU_USAGE -gt 80 ]; then
+		CPU_USAGE="^c#FF0000^CPU: ^c#BB2222^^r0,0,7,19^^f7^^c#FF0000^^r-7,1,7,18^"
+	elif [ $CPU_USAGE -gt 90 ]; then
+		CPU_USAGE="^c#FF0000^CPU: ^c#BB2200^^r0,0,7,19^^f7^^c#FF0000^^r-7,0,7,20^"
+	fi
+
+	# CPU temperature
+	TEMP=$(sensors | awk 'NR==3{print substr($4,2,2)}')
+	if [ $TEMP -lt 40 ]; then
+		TEMP="^c#00FF00^T: $TEMP^d^"
+	elif [ $TEMP -lt 50 -a $TEMP -ge 40 ]; then
+		TEMP="^c#80FF00^T: $TEMP^d^"
+	elif [ $TEMP -lt 60 -a $TEMP -ge 50 ]; then
+		TEMP="^c#FFFF00^T: $TEMP^d^"
+	elif [ $TEMP -lt 70 -a $TEMP -ge 60 ]; then
+		TEMP="^c#FFBF00^T: $TEMP^d^"
+	elif [ $TEMP -lt 80 -a $TEMP -ge 70 ]; then
+		TEMP="^c#FF8000^T: $TEMP^d^"
+	elif [ $TEMP -ge 80 ]; then
+		TEMP="^c#FF0000^T: $TEMP^d^"
+	fi
+
+	echo " $CPU_USAGE $(s)  $TEMP "
+}
+
+memory()
+{
+	# ram memory
+	RAM_USED=$(free -m | awk 'NR==2{print $3 " / " $2}')
+	RAM=$(free -g | awk 'NR==2{print $3}')
+	if [ $RAM -lt 1 ]; then
+		RAM_USED="^c#00FF00^ $RAM_USED^d^"
+	elif [ $RAM -ge 1 -a $RAM -lt 2 ]; then
+		RAM_USED="^c#80FF00^ $RAM_USED^d^"
+	elif [ $RAM -ge 2 -a $RAM -lt 3 ]; then
+		RAM_USED="^c#BFFF00^ $RAM_USED^d^"
+	elif [ $RAM -ge 3 -a $RAM -lt 4 ]; then
+		RAM_USED="^c#FFFF00^ $RAM_USED^d^"
+	elif [ $RAM -ge 4 -a $RAM -lt 5 ]; then
+		RAM_USED="^c#FFBF00^ $RAM_USED^d^"
+	elif [ $RAM -ge 5 -a $RAM -lt 6 ]; then
+		RAM_USED="^c#FF8000^ $RAM_USED^d^"
+	elif [ $RAM -ge 6 -a $RAM -lt 7 ]; then
+		RAM_USED="^c#FF4000^ $RAM_USED^d^"
+	elif [ $RAM -ge 7 ]; then
+		RAM_USED="^c#FF0000^ $RAM_USED^d^"
+	fi
+
+	# disk
+	DISK=$(df -h | awk '/\/$/{print $3 " / " $4}')
+	DISK2=$(df -h | awk '/\/$/{print $8 " / " $8}')
+	echo " $RAM_USED $(s)  ^c#FFFFFF^ $DISK^d^ ^c#FFFFFF^ $DISK2^d^"
+}
+
+# WiFi signal
+wifi()
+{
+	LINK=$(cat /proc/net/wireless | awk 'NR==3{print substr($3,1,2)}')
+	WIFI=$(cat /proc/net/wireless | awk 'NR==3{print substr($3,1,2)}')
+	WIFI=$(echo "$WIFI * 10 / 7" | bc)
+	if [ $WIFI -ge 90 -a $LINK -gt 60 ]; then
+		WIFI="^c#00FF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 90 -a $WIFI -ge 80 ]; then
+		WIFI="^c#40FF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 80 -a $WIFI -ge 70 ]; then
+		WIFI="^c#80FF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 70 -a $WIFI -ge 60 ]; then
+		WIFI="^c#BFFF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 60 -a $WIFI -ge 50 ]; then
+		WIFI="^c#FFFF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 50 -a $WIFI -ge 40 ]; then
+		WIFI="^c#FFFF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 40 -a $WIFI -ge 30 ]; then
+		WIFI="^c#FFBF00^直 $WIFI^d^"
+	elif [ $WIFI -lt 30 -a $WIFI -ge 20 ]; then
+		WIFI="^c#FF8000^直 $WIFI^d^"
+	elif [ $WIFI -lt 20 -a $WIFI -ge 10 ]; then
+		WIFI="^c#FF4000^直 $WIFI^d^"
+	elif [ $WIFI -lt 10 -a $LINK -lt 10]; then
+		WIFI="^c#FF4000^直 $WIFI^d^"
+	else
+		WIFI="^c#FF0000^睊 DOWN^d^"
+	fi
+	printf " $WIFI "
+}
+
+basic() 
+{
+#	# microphone
+#	statemic=$(amixer | grep Capture | awk 'NR==6{print substr($7,2,2)}')
+#	if [ $statemic = "on" ]; then
+#		MIC="^c#FFFFFF^ "
+#	else
+#		MIC="^c#FF0000^ "
+#	fi
+
+	# volume
+	VOL=$(amixer sget Master | awk '/Mono./ {print substr($4,2,2)}')
+	VOL_STATE=$(amixer sget Master | awk '/Mono./ {print substr($6,3,1)}')
+	if [ "$VOL_STATE" = "n" ]; then
+		VOL="^c#FFFFFF^墳 $VOL^d^"
+	else
+		VOL="^c#FF0000^婢 $VOL^d^"
+	fi
+
+#	# bright
+#	BRI=$(xbacklight | xargs printf "%.*f" 0)
+#	BRI="^c#FFFFFF^$BRI^d^"
+#
+#	# battery
+#	BAT=$(cat /sys/class/power_supply/BAT0/capacity)
+#	STATUS=$(cat /sys/class/power_supply/BAT0/status)
+#	if [ $STATUS != "Discharging" ]; then
+#		BAT="^c#00FF00^ $BAT^d^"
+#	else
+#		if [ $BAT -ge 90 ]; then
+#			BAT="^c#00FF00^ $BAT^d^"
+#		elif [ $BAT -lt 90 -a $BAT -ge 80 ]; then
+#			BAT="^c#40FF00^ $BAT^d^"
+#		elif [ $BAT -lt 80 -a $BAT -ge 70 ]; then
+#			BAT="^c#40FF00^ $BAT^d^"
+#		elif [ $BAT -lt 70 -a $BAT -ge 60 ]; then
+#			BAT="^c#80FF00^ $BAT^d^"
+#		elif [ $BAT -lt 60 -a $BAT -ge 50 ]; then
+#			BAT="^c#BFFF00^ $BAT^d^"
+#		elif [ $BAT -lt 50 -a $BAT -ge 40 ]; then
+#			BAT="^c#FFFF00^ $BAT^d^"
+#		elif [ $BAT -lt 40 -a $BAT -ge 30 ]; then
+#			BAT="^c#FFBF00^ $BAT^d^"
+#		elif [ $BAT -lt 30 -a $BAT -ge 20 ]; then
+#			BAT="^c#FF8000^ $BAT^d^"
+#		elif [ $BAT -lt 20 -a $BAT -ge 10 ]; then
+#			BAT="^c#FF4000^ $BAT^d^"
+#		elif [ $BAT -lt 10 ]; then
+#			BAT="^c#FF0000^ $BAT^d^"
+#		fi
+#	fi
+#
+	# date
+	HOUR=$(date "+%d %a %H:%M")
+	HOUR="^c#FFFFFF^$HOUR^d^"
+
+	# print informations
+	echo "  $VOL $(s)   $(s) $HOUR"
+}
+
+while true
+do
+	xsetroot -name "$(cpu) $(memory) $(basic)"
+	sleep 2
+done

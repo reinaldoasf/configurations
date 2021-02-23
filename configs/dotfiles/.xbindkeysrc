@@ -1,0 +1,66 @@
+# mouse click
+"xdotool click 1"
+m:0x40 + c:47
+
+# mouse hold
+"xdotool mousedown 1"
+m:0x44 +c:47
+
+# mouse release
+"xdotool mouseup 1"
+m:0x40 + c:48
+
+# mouse position
+"xdotool mousemove 1920 0"
+m:0x40 + c:29
+
+"xdotool mousemove 0 0"
+m:0x40 + c:30
+
+"xdotool mousemove 0 1080"
+m:0x40 + c:31
+
+"xdotool mousemove 1920 1080"
+m:0x40 + c:32
+
+"xdotool mousemove 960 540"
+m:0x40 + c:33
+
+# mouse cursor control
+"xdotool mousemove_relative 40 0"
+m:0x40 + c:46
+
+"xdotool mousemove_relative 0 40"
+m:0x40 + c:44
+
+"xdotool mousemove_relative -- -40 0" 
+m:0x40 + c:43
+
+"xdotool mousemove_relative -- 0 -40"
+m:0x40 + c:45
+
+# mouse cursor control faster
+"xdotool mousemove_relative 200 0"
+m:0x41 + c:46
+
+"xdotool mousemove_relative 0 200"
+m:0x41 + c:44
+
+"xdotool mousemove_relative -- -200 0" 
+m:0x41 + c:43
+
+"xdotool mousemove_relative -- 0 -200"
+m:0x41 + c:45
+
+# mouse cursor control slower
+"xdotool mousemove_relative 8 0"
+m:0x48 + c:46
+
+"xdotool mousemove_relative 0 8"
+m:0x48 + c:44
+
+"xdotool mousemove_relative -- -8 0" 
+m:0x48 + c:43
+
+"xdotool mousemove_relative -- 0 -8"
+m:0x48 + c:45

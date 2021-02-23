@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+DIR=~/Pictures/printscreen
+
+if [ ! -d $DIR ]; then
+	mkdir -p $DIR
+fi
+
+import $DIR/$(date +%Y-%m-%d_%H:%M:%S).png
